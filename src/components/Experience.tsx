@@ -31,7 +31,7 @@ const Experience = ({ shadows }: { shadows: boolean }) => {
         distance={1}
         loop
         autoplay
-      />{" "}
+      />
       <ambientLight intensity={1} />
       <directionalLight
         intensity={1.2}
