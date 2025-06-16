@@ -81,7 +81,7 @@ export default function ZombieInvasionMenu({
             <h1
               className="relative mb-1"
               style={{
-                fontSize: "clamp(3rem, 10vw, 8rem)",
+                fontSize: "clamp(3rem, 10vw, 7rem)",
                 fontWeight: "900",
                 lineHeight: "0.9",
                 letterSpacing: "0.02em",
@@ -102,7 +102,7 @@ export default function ZombieInvasionMenu({
             <h1
               className="relative"
               style={{
-                fontSize: "clamp(2.5rem, 8vw, 6.5rem)",
+                fontSize: "clamp(2.5rem, 8vw, 5.5rem)",
                 fontWeight: "900",
                 lineHeight: "0.9",
                 letterSpacing: "0.02em",
