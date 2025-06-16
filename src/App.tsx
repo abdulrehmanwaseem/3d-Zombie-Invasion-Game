@@ -1,38 +1,58 @@
-import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
-import Experience from "./components/Experience";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import * as THREE from "three";
-import { Perf } from "r3f-perf";
-import { Leva } from "leva";
+import Experience from "./components/Experience";
+import StartMenu from "./components/StartMenu";
 
 const App = () => {
   const [shadows, setShadows] = useState(true);
+  const [showMenu, setShowMenu] = useState(true);
 
   useEffect(() => {
     const id = setTimeout(() => {
       setShadows(false);
-    }, 850);
+    }, 1000);
     return () => clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === "Escape" || event.key === "Esc") {
+        setShowMenu(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
   }, []);
 
   return (
     <>
-      {/* <Leva collapsed /> */}
-      <Canvas
-        shadows={shadows ? { type: THREE.PCFSoftShadowMap } : false}
-        camera={{ position: [0, 8, 15], near: 0.1, fov: 60, far: 200 }}
-        gl={{
-          antialias: true,
-          toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.0,
-        }}
-      >
-        <Perf />
-        <Suspense fallback={null}>
-          <Experience shadows={shadows} />
-        </Suspense>
-      </Canvas>
+      {showMenu ? (
+        <StartMenu
+          onStart={() => setShowMenu(false)}
+          onControls={() => console.log("Test Controls")}
+          onSettings={() => console.log("Test Settings")}
+          onQuit={() => console.log("Test Quit")}
+        />
+      ) : (
+        <Canvas
+          shadows={{ type: THREE.PCFSoftShadowMap }}
+          camera={{ position: [30, 8, 20], near: 0.1, fov: 60, far: 200 }}
+          gl={{
+            antialias: true,
+            toneMapping: THREE.ACESFilmicToneMapping,
+            toneMappingExposure: 1.0,
+          }}
+        >
+          <Suspense fallback={null}>
+            <Experience shadows={shadows} />
+          </Suspense>
+        </Canvas>
+      )}
     </>
   );
 };
