@@ -8,37 +8,13 @@ import { Character } from "./Character";
 import { InvasionEnvironment } from "./Invasion_environment";
 import { PakistanFlag } from "./Pakistan_flag";
 import AtmosphericEffects from "./AtmosphericEffects";
+import keyboardMap from "../data/keyboardMap.json";
+import animationSet from "../data/animationSet.json";
 
 useLoader.preload(THREE.TextureLoader, "/models/Textures/sky.jpg");
 
 const Experience = ({ shadows }: { shadows: boolean }) => {
   const characterURL = "/models/character.glb";
-
-  const keyboardMap = [
-    { name: "forward", keys: ["ArrowUp", "KeyW"] },
-    { name: "backward", keys: ["ArrowDown", "KeyS"] },
-    { name: "leftward", keys: ["ArrowLeft", "KeyA"] },
-    { name: "rightward", keys: ["ArrowRight", "KeyD"] },
-    { name: "jump", keys: ["Space"] },
-    { name: "run", keys: ["Shift"] },
-    { name: "action1", keys: ["1"] },
-    { name: "action2", keys: ["KeyF"] },
-    { name: "action3", keys: ["KeyE"] },
-    { name: "action4", keys: ["3"] },
-  ];
-
-  const animationSet = {
-    idle: "idle",
-    walk: "walk",
-    run: "sprint",
-    jump: "jump",
-    jumpIdle: "idle",
-    jumpLand: "idle",
-    fall: "fall",
-    action1: "pick-up",
-    action2: "attack-melee-right",
-    action3: "attack-kick-right",
-  };
 
   const texture = useLoader(THREE.TextureLoader, "/models/Textures/sky.jpg");
   texture.mapping = THREE.EquirectangularReflectionMapping;

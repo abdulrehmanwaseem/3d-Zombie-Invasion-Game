@@ -1,59 +1,74 @@
+import React, { Suspense, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useEffect, useState } from "react";
 import * as THREE from "three";
 import Experience from "./components/Experience";
 import StartMenu from "./components/StartMenu";
+import ControlsModal from "./components/ControlsModal";
 
-const App = () => {
+const App: React.FC = () => {
   const [shadows, setShadows] = useState(true);
   const [showMenu, setShowMenu] = useState(true);
+  const [showControls, setShowControls] = useState(false);
 
+  // Fade out initial shadows
   useEffect(() => {
-    const id = setTimeout(() => {
-      setShadows(false);
-    }, 1000);
+    const id = setTimeout(() => setShadows(false), 2000);
     return () => clearTimeout(id);
   }, []);
 
+  // Toggle menu on ESC
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key === "Escape" || event.key === "Esc") {
         setShowMenu(true);
+        setShowControls(false);
       }
     };
-
     window.addEventListener("keydown", handleKeyPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, []);
 
+  if (showControls) {
+    return <ControlsModal onClose={() => setShowControls(false)} />;
+  }
+
+  const handleStart = () => {
+    setShowMenu(false);
+    setShowControls(false);
+  };
+  const handleControls = () => {
+    setShowControls(true);
+  };
+  const handleSettings = () => console.log("Settings");
+  const handleQuit = () => console.log("Quit Game");
+
+  console.log(showControls);
+
+  if (showMenu) {
+    return (
+      <StartMenu
+        onStart={handleStart}
+        onControls={handleControls}
+        onSettings={handleSettings}
+        onQuit={handleQuit}
+      />
+    );
+  }
+
   return (
-    <>
-      {showMenu ? (
-        <StartMenu
-          onStart={() => setShowMenu(false)}
-          onControls={() => console.log("Test Controls")}
-          onSettings={() => console.log("Test Settings")}
-          onQuit={() => console.log("Test Quit")}
-        />
-      ) : (
-        <Canvas
-          shadows={{ type: THREE.PCFSoftShadowMap }}
-          camera={{ position: [30, 8, 20], near: 0.1, fov: 60, far: 200 }}
-          gl={{
-            antialias: true,
-            toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 1.0,
-          }}
-        >
-          <Suspense fallback={null}>
-            <Experience shadows={shadows} />
-          </Suspense>
-        </Canvas>
-      )}
-    </>
+    <Canvas
+      shadows={{ type: THREE.PCFSoftShadowMap }}
+      camera={{ position: [30, 8, 20], near: 0.1, fov: 60, far: 200 }}
+      gl={{
+        antialias: true,
+        toneMapping: THREE.ACESFilmicToneMapping,
+        toneMappingExposure: 1.0,
+      }}
+    >
+      <Suspense fallback={null}>
+        <Experience shadows={shadows} />
+      </Suspense>
+    </Canvas>
   );
 };
 

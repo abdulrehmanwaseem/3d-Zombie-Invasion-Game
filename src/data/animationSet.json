@@ -1,0 +1,12 @@
+{
+  "idle": "idle",
+  "walk": "walk",
+  "run": "sprint",
+  "jump": "jump",
+  "jumpIdle": "idle",
+  "jumpLand": "idle",
+  "fall": "fall",
+  "action1": "pick-up",
+  "action2": "attack-melee-right",
+  "action3": "attack-kick-right"
+}
