@@ -54,11 +54,11 @@ export default function ControlsModal({ onClose }: ControlsModalProps) {
     },
   ];
 
-  const KeyBadge = ({ keyName }: { keyName: string }) => (
-    <kbd className="inline-flex items-center justify-center min-w-[2.5rem] h-8 px-2 text-sm font-mono font-semibold text-gray-800 bg-gradient-to-b from-gray-100 to-gray-300 border border-gray-400 rounded-md shadow-md transform transition-transform hover:scale-105">
-      {keyName}
-    </kbd>
-  );
+  // const KeyBadge = ({ keyName }: { keyName: string }) => (
+  //   <kbd className="inline-flex items-center justify-center min-w-[2.5rem] h-8 px-2 text-sm font-mono font-semibold text-gray-800 bg-gradient-to-b from-gray-100 to-gray-300 border border-gray-400 rounded-md shadow-md transform transition-transform hover:scale-105">
+  //     {keyName}
+  //   </kbd>
+  // );
 
   return (
     <div

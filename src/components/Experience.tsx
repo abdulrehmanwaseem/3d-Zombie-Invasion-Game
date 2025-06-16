@@ -1,4 +1,4 @@
-import { KeyboardControls } from "@react-three/drei";
+import { KeyboardControls, PositionalAudio } from "@react-three/drei";
 import { useLoader, useThree } from "@react-three/fiber";
 import { Physics, RigidBody } from "@react-three/rapier";
 import Ecctrl, { EcctrlAnimation } from "ecctrl";
@@ -26,6 +26,12 @@ const Experience = ({ shadows }: { shadows: boolean }) => {
 
   return (
     <>
+      <PositionalAudio
+        url="/sounds/background.mp3"
+        distance={1}
+        loop
+        autoplay
+      />{" "}
       <ambientLight intensity={1} />
       <directionalLight
         intensity={1.2}
@@ -52,7 +58,6 @@ const Experience = ({ shadows }: { shadows: boolean }) => {
       />
       {/* Atmospheric Effects */}
       <AtmosphericEffects />
-
       <Physics>
         <RigidBody type="fixed" colliders="trimesh">
           <InvasionEnvironment
