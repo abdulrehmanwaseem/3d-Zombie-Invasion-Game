@@ -6,6 +6,9 @@ import Experience from "./components/Experience";
 import StartMenu from "./components/StartMenu";
 import ControlsModal from "./components/ControlsModal";
 import ZombieLoadingScreen from "./components/ZombieLoadingScreen";
+import { EcctrlJoystick } from "ecctrl";
+import SettingsModal from "./components/SettingsModal";
+import { Stats } from "@react-three/drei";
 
 // Loading fallback component that tracks progress
 const LoadingFallback: React.FC = () => {
@@ -22,22 +25,21 @@ const LoadingFallback: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  const [shadows, setShadows] = useState(true);
+  const isMobile = () => window.innerWidth <= 768;
+
+  const [shadows, setShadows] = useState(false);
+  const [showStats, setShowStats] = useState(true);
   const [showMenu, setShowMenu] = useState(true);
   const [showControls, setShowControls] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const id = setTimeout(() => setShadows(false), 2000);
-    return () => clearTimeout(id);
-  }, []);
-
-  useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === "Escape" || event.key === "Esc") {
+      if (event.key === "Tab") {
         setShowMenu(true);
         setShowControls(false);
       }
@@ -46,46 +48,79 @@ const App: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, []);
 
-  // Simulate progress tracking (you can replace this with actual progress tracking)
   useEffect(() => {
     if (isLoading) {
-      const interval = setInterval(() => {
-        setLoadingProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            return 100;
-          }
-          // Simulate realistic loading progression
-          const increment = Math.random() * 15 + 5;
-          return Math.min(prev + increment, 100);
-        });
-      }, 200);
+      // Small initial delay before starting progress
+      const startDelay = setTimeout(() => {
+        // Moderate progress with realistic loading curve
+        const interval = setInterval(() => {
+          setLoadingProgress((prev) => {
+            if (prev >= 100) {
+              clearInterval(interval);
+              return 100;
+            }
 
-      return () => clearInterval(interval);
+            // Variable progress at different stages
+            let increment;
+            if (prev < 40) {
+              // Fast initial progress
+              increment = Math.random() * 10 + 5;
+            } else if (prev < 70) {
+              // Medium speed in middle
+              increment = Math.random() * 8 + 3;
+            } else if (prev < 90) {
+              // Slower near the end
+              increment = Math.random() * 5 + 2;
+            } else {
+              // Slow for final 10%
+              increment = Math.random() * 3 + 1;
+            }
+
+            return Math.min(prev + increment, 100);
+          });
+        }, 300); // Moderate interval of 300ms
+
+        return () => clearInterval(interval);
+      }, 300); // Small 300ms delay before progress starts
+
+      return () => clearTimeout(startDelay);
     }
   }, [isLoading]);
 
-  // Show controls modal
   if (showControls) {
     return <ControlsModal onClose={() => setShowControls(false)} />;
   }
 
-  // Show loading screen
+  if (showSettings) {
+    return (
+      <SettingsModal
+        onClose={() => setShowSettings(false)}
+        shadows={shadows}
+        showStats={showStats}
+        onStatsChange={setShowStats}
+        onShadowsChange={setShadows}
+      />
+    );
+  }
+
   if (isLoading) {
     return (
       <>
         <ZombieLoadingScreen
           progress={loadingProgress}
           onComplete={() => {
-            setIsLoading(false);
+            // Small delay after reaching 100%
             setTimeout(() => {
-              canvasRef.current?.requestPointerLock();
-            }, 100);
+              setIsLoading(false);
+            }, 800); // Reduced to 800ms after completion
           }}
         />
-        {/* Hidden canvas that loads in background */}
         <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
-          <Canvas style={{ width: "1px", height: "1px" }} gl={{ alpha: false }}>
+          <Canvas
+            ref={canvasRef}
+            style={{ width: "1px", height: "1px" }}
+            gl={{ alpha: false }}
+          >
             <Suspense fallback={<LoadingFallback />}>
               <Experience shadows={shadows} />
             </Suspense>
@@ -98,42 +133,49 @@ const App: React.FC = () => {
   const handleStart = () => {
     setShowMenu(false);
     setShowControls(false);
+    setShowSettings(false);
     setIsLoading(true);
     setLoadingProgress(0);
   };
 
   const handleControls = () => setShowControls(true);
-  const handleSettings = () => console.log("Settings");
-  const handleQuit = () => console.log("Quit Game");
+  const handleSettings = () => setShowSettings(true);
 
-  // Show start menu
   if (showMenu) {
     return (
       <StartMenu
         onStart={handleStart}
         onControls={handleControls}
         onSettings={handleSettings}
-        onQuit={handleQuit}
       />
     );
   }
 
   return (
-    <Canvas
-      ref={canvasRef}
-      style={{ touchAction: "none" }}
-      shadows={{ type: THREE.PCFSoftShadowMap }}
-      camera={{ position: [30, 8, 20], near: 0.1, fov: 60, far: 200 }}
-      gl={{
-        antialias: true,
-        toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.0,
-      }}
-    >
-      <Suspense fallback={<LoadingFallback />}>
-        <Experience shadows={shadows} />
-      </Suspense>
-    </Canvas>
+    <>
+      {isMobile() && <EcctrlJoystick buttonNumber={1} />}
+
+      <Canvas
+        ref={canvasRef}
+        style={{ touchAction: "none" }}
+        shadows={{ type: THREE.PCFSoftShadowMap }}
+        camera={{ position: [30, 8, 20], near: 0.1, fov: 60, far: 200 }}
+        gl={{
+          antialias: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.0,
+        }}
+        onCreated={() => {
+          canvasRef.current?.requestPointerLock();
+        }}
+      >
+        {showStats && <Stats />}
+
+        <Suspense fallback={<LoadingFallback />}>
+          <Experience shadows={shadows} />
+        </Suspense>
+      </Canvas>
+    </>
   );
 };
 

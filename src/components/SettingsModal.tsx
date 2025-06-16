@@ -1,14 +1,33 @@
 import React, { useEffect, useState } from "react";
 
-interface ControlsModalProps {
-  onClose(): void;
+interface SettingsModalProps {
+  onClose: () => void;
+  shadows: boolean;
+  onShadowsChange: (enabled: boolean) => void;
+  showStats: boolean;
+  onStatsChange: (enabled: boolean) => void;
 }
 
-export default function ControlsModal({ onClose }: ControlsModalProps) {
+export default function SettingsModal({
+  onClose,
+  shadows,
+  onShadowsChange,
+  showStats,
+  onStatsChange,
+}: SettingsModalProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
+
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === "Escape" || event.key === "Esc") {
+        handleClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, []);
 
   const handleClose = () => {
@@ -16,30 +35,41 @@ export default function ControlsModal({ onClose }: ControlsModalProps) {
     setTimeout(onClose, 300);
   };
 
-  const keyboardMap = [
+  const settings = [
     {
-      category: "Movement",
-      controls: [
-        { name: "Move Forward", keys: ["↑", "W"], icon: "⬆️" },
-        { name: "Move Backward", keys: ["↓", "S"], icon: "⬇️" },
-        { name: "Move Left", keys: ["←", "A"], icon: "⬅️" },
-        { name: "Move Right", keys: ["→", "D"], icon: "➡️" },
-        { name: "Jump", keys: ["Space"], icon: "🦘" },
-        { name: "Run/Sprint", keys: ["Shift"], icon: "💨" },
+      category: "Graphics",
+      options: [
+        {
+          id: "shadows",
+          label: "Shadows",
+          description: "Enable or disable shadow rendering",
+          icon: "🌑",
+          type: "toggle" as const,
+          value: shadows,
+          onChange: onShadowsChange,
+        },
       ],
     },
     {
-      category: "Combat",
-      controls: [
-        { name: "Melee Attack", keys: ["F"], icon: "👊" },
-        { name: "Kick Attack", keys: ["E"], icon: "🦵" },
-      ],
-    },
-    {
-      category: "Other",
-      controls: [
-        { name: "Emote", keys: ["1"], icon: "😄" },
-        { name: "Pause Menu", keys: ["Esc"], icon: "⏸️" },
+      category: "Performance",
+      options: [
+        {
+          id: "stats",
+          label: "Show FPS Counter",
+          description: "Display performance statistics in-game",
+          icon: "📊",
+          type: "toggle" as const,
+          value: showStats,
+          onChange: onStatsChange,
+        },
+        {
+          id: "quality-info",
+          label: "Quality Note",
+          description:
+            "Disabling shadows can improve performance on lower-end devices",
+          icon: "⚡",
+          type: "info" as const,
+        },
       ],
     },
   ];
@@ -98,7 +128,7 @@ export default function ControlsModal({ onClose }: ControlsModalProps) {
                   textShadow: "4px 4px 8px rgba(0,0,0,0.5)",
                 }}
               >
-                CONTROLS
+                SETTINGS
               </span>
             </h1>
             <p
@@ -107,19 +137,19 @@ export default function ControlsModal({ onClose }: ControlsModalProps) {
                 textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
               }}
             >
-              Master these controls to survive!
+              Configure your game experience
             </p>
           </div>
         </div>
 
-        {/* Controls Grid */}
+        {/* Settings Content */}
         <div
-          className={`w-full max-w-6xl flex-1 transform transition-all duration-1000 delay-300  overflow-hidden ${
+          className={`w-full max-w-2xl flex-1 overflow-y-auto transform transition-all duration-1000 delay-300 ${
             isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
           }`}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-4 ">
-            {keyboardMap.map((section, sectionIndex) => (
+          <div className="space-y-6 p-4">
+            {settings.map((section, sectionIndex) => (
               <div
                 key={section.category}
                 className="space-y-3"
@@ -134,54 +164,62 @@ export default function ControlsModal({ onClose }: ControlsModalProps) {
                   {section.category}
                 </h3>
 
-                <div className="space-y-2 ">
-                  {section.controls.map((control, controlIndex) => (
+                <div className="space-y-2">
+                  {section.options.map((option, optionIndex) => (
                     <div
-                      key={control.name}
+                      key={option.id}
                       className={`
-                        group flex items-center justify-between p-3 
+                        group flex items-center justify-between p-4 
                         bg-gray-800/80 backdrop-blur-sm rounded-lg 
                         border-2 border-gray-600 
-                        hover:border-blue-400 hover:bg-gray-700/80 
-                        transition-all duration-300 transform hover:scale-[1.02]
+                        ${
+                          option.type === "toggle"
+                            ? "hover:border-blue-400"
+                            : ""
+                        } 
+                        transition-all duration-300 transform
                       `}
                       style={{
                         animationDelay: `${
-                          sectionIndex * 100 + controlIndex * 50
+                          sectionIndex * 100 + optionIndex * 50
                         }ms`,
                       }}
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl transform group-hover:scale-110 transition-transform duration-200">
-                          {control.icon}
-                        </span>
-                        <span className="font-semibold text-gray-200 group-hover:text-white transition-colors">
-                          {control.name}
-                        </span>
+                      <div className="flex items-center gap-3 flex-1">
+                        <span className="text-2xl">{option.icon}</span>
+                        <div>
+                          <h4 className="font-semibold text-white">
+                            {option.label}
+                          </h4>
+                          <p className="text-sm text-gray-400 mt-1">
+                            {option.description}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        {control.keys.map((key, keyIndex) => (
-                          <React.Fragment key={key}>
-                            {keyIndex > 0 && (
-                              <span className="text-gray-500 text-sm">or</span>
-                            )}
-                            <kbd
-                              className="
-                              inline-flex items-center justify-center 
-                              min-w-[2.5rem] h-8 px-2 
-                              text-sm font-mono font-bold 
-                              text-white bg-blue-600 
-                              border-2 border-blue-400 
-                              rounded-md shadow-lg shadow-blue-500/30
-                              transform transition-transform hover:scale-105
-                            "
-                            >
-                              {key}
-                            </kbd>
-                          </React.Fragment>
-                        ))}
-                      </div>
+                      {option.type === "toggle" && (
+                        <button
+                          onClick={() => option.onChange(!option.value)}
+                          className={`
+                            relative w-16 h-8 rounded-full transition-all duration-300
+                            ${
+                              option.value
+                                ? "bg-blue-600 hover:bg-blue-500"
+                                : "bg-gray-600 hover:bg-gray-500"
+                            }
+                          `}
+                        >
+                          <div
+                            className={`
+                              absolute top-1 w-6 h-6 bg-white rounded-full shadow-md
+                              transition-transform duration-300
+                              ${
+                                option.value ? "translate-x-8" : "translate-x-1"
+                              }
+                            `}
+                          />
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>

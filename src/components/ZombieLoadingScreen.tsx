@@ -94,16 +94,13 @@ export default function ZombieLoadingScreen({
           <div className="relative mb-8">
             {/* Background Bar */}
             <div className="h-8 bg-gray-800/80 rounded-lg border-2 border-gray-600 overflow-hidden backdrop-blur-sm">
-              {/* Progress Fill */}
+              {/* Progress Fill - Blue theme */}
               <div
-                className="h-full bg-gradient-to-r from-red-600 via-red-500 to-red-400 transition-all duration-300 ease-out relative overflow-hidden"
+                className="h-full bg-gradient-to-r from-blue-600 to-blue-700 transition-all duration-300 ease-out relative overflow-hidden"
                 style={{ width: `${animatedProgress}%` }}
               >
                 {/* Animated Shine Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
-
-                {/* Blood drip effect */}
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-red-800" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-shimmer" />
               </div>
 
               {/* Zombie Icons Moving Across */}
@@ -121,7 +118,7 @@ export default function ZombieLoadingScreen({
             </div>
 
             {/* Progress Percentage */}
-            <div className="absolute -top-10 left-1/2 -translate-x-1/2">
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2">
               <span
                 className="text-3xl font-black text-white"
                 style={{
@@ -137,7 +134,7 @@ export default function ZombieLoadingScreen({
           {/* Loading Text */}
           <div className="text-center mb-8">
             <p
-              className="text-xl font-bold text-red-400 tracking-wider"
+              className="text-xl font-bold text-blue-400 tracking-wider"
               style={{
                 textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
                 fontFamily: "Arial Black, sans-serif",
@@ -150,9 +147,9 @@ export default function ZombieLoadingScreen({
 
           {/* Loading Tips */}
           <div className="text-center">
-            <div className="bg-black/60 rounded-lg p-4 border border-gray-700 backdrop-blur-sm">
-              <p className="text-yellow-400 font-semibold mb-2 text-sm">
-                💡 SURVIVAL TIP
+            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg p-4 border-2 border-gray-600">
+              <p className="text-blue-400 font-semibold mb-2 text-sm flex items-center justify-center gap-2">
+                💡SURVIVAL TIP
               </p>
               <p className="text-gray-300 text-sm">
                 {progress < 25 && "Keep moving to avoid zombie hordes"}
@@ -164,17 +161,6 @@ export default function ZombieLoadingScreen({
                   "Listen for zombie growls nearby"}
                 {progress >= 75 && "Find safe zones to catch your breath"}
               </p>
-            </div>
-          </div>
-
-          {/* Warning Message */}
-          <div className="text-center mt-8">
-            <div className="flex items-center justify-center space-x-2 text-red-500">
-              <span className="animate-pulse text-xl">⚠️</span>
-              <p className="text-sm font-semibold tracking-wide">
-                APOCALYPSE IMMINENT
-              </p>
-              <span className="animate-pulse text-xl">⚠️</span>
             </div>
           </div>
         </div>
@@ -202,10 +188,14 @@ export default function ZombieLoadingScreen({
         ))}
       </div>
 
-      <style jsx>{`
+      <style>{`
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(200%); }
+        }
+        
         @keyframes float {
-          0%,
-          100% {
+          0%, 100% {
             transform: translateY(0px) rotate(0deg);
             opacity: 0.3;
           }
@@ -213,6 +203,14 @@ export default function ZombieLoadingScreen({
             transform: translateY(-20px) rotate(180deg);
             opacity: 0.8;
           }
+        }
+        
+        .animate-shimmer {
+          animation: shimmer 2s infinite;
+        }
+        
+        .animate-float {
+          animation: float ease-in-out infinite;
         }
       `}</style>
     </div>

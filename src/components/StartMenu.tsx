@@ -4,14 +4,18 @@ interface StartMenuProps {
   onStart?: () => void;
   onControls?: () => void;
   onSettings?: () => void;
-  onQuit?: () => void;
+  onGitHub?: () => void;
 }
 
 export default function ZombieInvasionMenu({
   onStart = () => console.log("Start Game"),
   onControls = () => console.log("Controls"),
   onSettings = () => console.log("Settings"),
-  onQuit = () => console.log("Quit"),
+  onGitHub = () =>
+    window.open(
+      "https://github.com/abdulrehmanwaseem/3d-Zombie-Invasion-Game",
+      "_blank"
+    ),
 }: StartMenuProps) {
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -25,7 +29,7 @@ export default function ZombieInvasionMenu({
     { id: "start", label: "Start Game", action: onStart, primary: true },
     { id: "controls", label: "Controls Guide", action: onControls },
     { id: "settings", label: "Settings", action: onSettings },
-    { id: "quit", label: "Quit Game", action: onQuit },
+    { id: "github", label: "Go to GitHub", action: onGitHub }, // Replaced quit button with GitHub link
   ];
 
   return (
@@ -172,18 +176,6 @@ export default function ZombieInvasionMenu({
                 <span className="relative z-10 drop-shadow-md">
                   {button.label}
                 </span>
-
-                {/* Zombie Icon for Primary Button */}
-                {button.primary && (
-                  <>
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl animate-bounce">
-                      🧟
-                    </span>
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl animate-bounce">
-                      🧟
-                    </span>
-                  </>
-                )}
               </button>
             ))}
           </div>
@@ -196,7 +188,7 @@ export default function ZombieInvasionMenu({
           }`}
         >
           <p className="text-xs sm:text-sm text-gray-400">
-            Press ESC to pause during gameplay
+            Press Tab Key to pause during gameplay
           </p>
           <p className="mt-1 text-xs text-gray-500">
             © 2025 Zombie Invasion - Abdul Rehman. All rights reserved.
