@@ -6,7 +6,7 @@ A thrilling 3D zombie survival game built with React, Three.js, and React Three 
 
 ## 🎮 Live Demo
 
-[Play the Game](#http://zombie-invasion-three.vercel.app/)
+[Play the Game](http://zombie-invasion-three.vercel.app/)
 
 ## ✨ Features
 
