@@ -1,5 +1,6 @@
 # 🧟 Zombie Invasion Game
 
+![Zombie Invasion Banner](https://github.com/user-attachments/assets/7dfb33f0-33c1-4bfc-9232-752f9e372303)
 ![Zombie Invasion Banner](https://github.com/user-attachments/assets/8d7cbefa-d84d-4b85-9dce-87803e54d649)
 
 A thrilling 3D zombie survival game built with React, Three.js, and React Three Fiber. Navigate through a post-apocalyptic city environment while avoiding zombie hordes in this immersive web-based game.
